@@ -11,14 +11,13 @@ app.use(express.json());
 const DB_FILE = "./votes.json";
 
 // betöltés
-function loadVotes() {
-  try {
-    return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-  } catch {
-    return {};
-  }
-}
 
+function loadVotes() {
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, "{}");
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+}
 // mentés
 function saveVotes(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
