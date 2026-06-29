@@ -24,19 +24,19 @@ function saveVotes(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-// POST /vote
+// POST vote
+
 app.post("/vote", (req, res) => {
   const votes = loadVotes();
+  const selected = req.body.votes;
 
-  const incoming = req.body; 
-  // { "képzés": 1, ... }
+  if (!Array.isArray(selected)) {
+    return res.status(400).json({ error: "Invalid format" });
+  }
 
-  for (const key in incoming) {
-    if (!votes[key]) {
-      votes[key] = 1;
-    } else {
-      votes[key] += 1;
-    }
+  for (const name of selected) {
+    if (!votes[name]) votes[name] = 0;
+    votes[name] += 1;
   }
 
   saveVotes(votes);
